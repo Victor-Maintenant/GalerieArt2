@@ -31,9 +31,9 @@ public class TableauController {
      * @return le nom de la vue à afficher ('afficheTableau.html')
      */
     @GetMapping(path = "show")
-    public String afficheToutesLesGaleries(Model model) {
-        model.addAttribute("tableau", dao.findAll());
-        return "afficheTableau";
+    public String afficheTousLesTableaux(Model model) {
+        model.addAttribute("tableaux", dao.findAll());
+        return "afficheTableaux";
     }
 
     /**
@@ -43,7 +43,7 @@ public class TableauController {
      * @return le nom de la vue à afficher ('formulaireGalerie.html')
      */
     @GetMapping(path = "add")
-    public String montreLeFormulairePourAjout(@ModelAttribute("galerie") Tableau tableau) {
+    public String montreLeFormulairePourAjout(@ModelAttribute("tableau") Tableau tableau) {
         return "formulaireTableau";
     }
 
@@ -55,7 +55,7 @@ public class TableauController {
      * @return une redirection vers l'affichage de la liste des galeries
      */
     @PostMapping(path = "save")
-    public String ajouteLaGaleriePuisMontreLaListe(Tableau tableau, RedirectAttributes redirectInfo) {
+    public String ajouteLeTableauPuisMontreLaListe(Tableau tableau, RedirectAttributes redirectInfo) {
         String message;
         try {
             // cf. https://www.baeldung.com/spring-data-crud-repository-save
@@ -83,7 +83,7 @@ public class TableauController {
      * @return une redirection vers l'affichage de la liste des galeries
      */
     @GetMapping(path = "delete")
-    public String supprimeUneCategoriePuisMontreLaListe(@RequestParam("id") Tableau tableau, RedirectAttributes redirectInfo) {
+    public String supprimeUnTableauPuisMontreLaListe(@RequestParam("id") Tableau tableau, RedirectAttributes redirectInfo) {
         String message = "Le tableau '" + tableau.getTitre() + "' a bien été supprimée";
         try {
             dao.delete(tableau); // Ici on peut avoir une erreur (Si il y a des expositions pour cette galerie par exemple)
