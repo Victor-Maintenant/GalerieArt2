@@ -25,11 +25,10 @@ and open the template in the editor.
 			</div>
 			<div class="column">
                                 <label for="auteur">Auteur:</label>
-				<input list="auteurs" name="auteur" id="auteur"/>
-                                <datalist id="auteurs">
-                                    <option value="Picasso">
-                                    <option value="Monet">
-                                </datalist>
+                                    <select name="auteur" size="1" th:field="*{auteur}">
+                                        <option value="artisteInconnu" selected="selected">Artiste Inconnu</option>
+                                        <option th:each="a: ${artistes}" th:value="${a.id}" th:text="${a.nom}"></option>
+                                    </select>
 				<label for="support">Support:</label>
 				<input type="text" th:field="*{support}" placeholder="Support du tableau"/>	
                                 <label for="dimension">Dimension:</label>
@@ -38,6 +37,7 @@ and open the template in the editor.
 		</form>		
 		<hr/>
 		<a th:href="@{/}" href="../static/index.html">Retour au menu</a>
+                <a th:href="@{/tableau/show}" href="./afficheTableaux.html">Retour aux tableaux</a>
 		<hr/>
     </body>
 </html>

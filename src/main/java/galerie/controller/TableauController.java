@@ -1,5 +1,6 @@
 package galerie.controller;
 
+import galerie.dao.ArtisteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import galerie.dao.TableauRepository;
+import galerie.entity.Artiste;
 import galerie.entity.Tableau;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -22,7 +24,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class TableauController {
 
     @Autowired
-    private TableauRepository dao;
+    private TableauRepository tableauDao;
+    @Autowired
+    private ArtisteRepository artisteDao;
 
     /**
      * Affiche toutes les catégories dans la base
@@ -32,7 +36,7 @@ public class TableauController {
      */
     @GetMapping(path = "show")
     public String afficheTousLesTableaux(Model model) {
-        model.addAttribute("tableaux", dao.findAll());
+        model.addAttribute("tableaux", tableauDao.findAll());
         return "afficheTableaux";
     }
 
@@ -40,10 +44,12 @@ public class TableauController {
      * Montre le formulaire permettant d'ajouter une galerie
      *
      * @param tableau initialisé par Spring, valeurs par défaut à afficher dans le formulaire
+     * @param model pour transmettre les informations à la vue
      * @return le nom de la vue à afficher ('formulaireGalerie.html')
      */
     @GetMapping(path = "add")
-    public String montreLeFormulairePourAjout(@ModelAttribute("tableau") Tableau tableau) {
+    public String montreLeFormulairePourAjout(@ModelAttribute("tableau") Tableau tableau, Model model) {
+        model.addAttribute("artistes", artisteDao.getArtiste());
         return "formulaireTableau";
     }
 
@@ -59,7 +65,7 @@ public class TableauController {
         String message;
         try {
             // cf. https://www.baeldung.com/spring-data-crud-repository-save
-            dao.save(tableau);
+            tableauDao.save(tableau);
             // Le code de la catégorie a été initialisé par la BD au moment de l'insertion
             message = "Le tableau '" + tableau.getTitre() + "' a été correctement enregistré";
         } catch (DataIntegrityViolationException e) {
@@ -86,7 +92,7 @@ public class TableauController {
     public String supprimeUnTableauPuisMontreLaListe(@RequestParam("id") Tableau tableau, RedirectAttributes redirectInfo) {
         String message = "Le tableau '" + tableau.getTitre() + "' a bien été supprimée";
         try {
-            dao.delete(tableau); // Ici on peut avoir une erreur (Si il y a des expositions pour cette galerie par exemple)
+            tableauDao.delete(tableau); // Ici on peut avoir une erreur (Si il y a des expositions pour cette galerie par exemple)
         } catch (DataIntegrityViolationException e) {
             // violation de contrainte d'intégrité si on essaie de supprimer une galerie qui a des expositions
             message = "Erreur : Impossible de supprimer le tableau '" + tableau.getTitre() + "' !";

@@ -6,5 +6,4 @@ import galerie.entity.Tableau;
 // This will be AUTO IMPLEMENTED by Spring 
 
 public interface TableauRepository extends JpaRepository<Tableau, Integer> {
-
 }
